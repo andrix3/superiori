@@ -39,16 +39,23 @@ get-process | Sort-Object CPU -Descending	| Select-Object -First 5	//mostra i pr
 get-process | Sort-Object (colonna…)
 Get-Process | Get-Member -type Method	//metodi di get-process
 Get-Process | Get-Member -type Propriety	//proprietà metodo get-process
-
+	descending
+	ascending
+	firs
+	last
 --indirizzamento output
 Get-Process | Sort-Object CPU | Select-Object -last 5 > processi.txt	//crea file processi.txt con dentro i 5 processi della cpu		NB: prima selezionare la directory con set-location
+	>	:sovrascrive
+	>>	:aggiunge
+	2>	:sovrascrive errori
+	2>>	:aggiunge errori
 
 --indirizzamento input
 echo “Ciao mondo”					//stampa ciao mondo
 echo Ciao mondo | Sort-Object -Descending			//stampa in ordine de-alfabetico per parola
 Get-Content nomi.txt				//stampa contenuto di un file
 Get-Content nomi.txt | Sort-Object -Descending	//stampa in ordine de-alfabetico il contenuto di un file per parola
-
+	
 --variabili
 $v = "Ciao mondo"		//stringa
 $n = 1			//intero
@@ -60,8 +67,19 @@ $a.Count        				//conta numero elementi
 
 $path = "C:\Users\torrisi_g\Desktop"
 Set-Location $path
+
 --condizioni
-if($a -match "mondo") {"parola trovata"} else {"parola non trovata"}		//n variabile array $a cerca
+if($a -eq "mondo") {"parola trovata"} else {"parola non trovata"}		//n variabile array $a cerca
+	-eq	:uguale case-insensitive: non considera maiuscole e minuscole
+	-ceq	:uguale case-sensitive
+	-lt	:minore
+	-gt	:maggiore
+	-le	:minore uguale
+	-ge	:maggiore uguale
+	-ne	:diverso
+	-not
+	-and
+	-or
 
 --cicli
 ---while
