@@ -43,6 +43,7 @@ Get-Process | Get-Member -type Propriety	//proprietà metodo get-process
 	ascending
 	firs
 	last
+	
 --indirizzamento output
 Get-Process | Sort-Object CPU | Select-Object -last 5 > processi.txt	//crea file processi.txt con dentro i 5 processi della cpu		NB: prima selezionare la directory con set-location
 	>	:sovrascrive
@@ -69,17 +70,23 @@ $path = "C:\Users\torrisi_g\Desktop"
 Set-Location $path
 
 --condizioni
-if($a -eq "mondo") {"parola trovata"} else {"parola non trovata"}		//n variabile array $a cerca
-	-eq	:uguale case-insensitive: non considera maiuscole e minuscole
-	-ceq	:uguale case-sensitive
-	-lt	:minore
-	-gt	:maggiore
-	-le	:minore uguale
-	-ge	:maggiore uguale
-	-ne	:diverso
-	-not
-	-and
-	-or
+---if
+	if($a -eq "mondo") {"parola trovata"} else {"parola non trovata"}		//n variabile array $a cerca
+	
+---where
+	$a = Get-ChildItem | where {$_ -like "*.ps1"}		//assegna alla vaiabile a il numero di file aventi l'estensione .ps1
+	
+	-eq	:uguale case-insensitive: non considera maiuscole e minuscole		i w
+	-ceq	:uguale case-sensitive			i
+	-lt	:minore					i w
+	-gt	:maggiore				i w
+	-le	:minore uguale				i w
+	-ge	:maggiore uguale			i w
+	-ne	:diverso				i w
+	-not				i
+	-and				i
+	-or				i
+	-like	:uguale			w
 
 --cicli
 ---while
