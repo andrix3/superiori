@@ -1,11 +1,11 @@
 
-public class CalcoloTraiettoria {
-	private int alfa, v;
-	private int t;
+public class CalcoloTraiettoria{
+	private double alfa, v;
+	private double t;
 	
 	private static final double G = 9.81;
 	
-	public void setAlfa(int alfa) {
+	public void setAlfa(double alfa) {
 		if(alfa > 0 && alfa < 90)
 			this.alfa = alfa;
 	}
@@ -13,26 +13,30 @@ public class CalcoloTraiettoria {
 		if(v > 0)
 			this.v = v;
 	}
-	public void setT(int t) {
+	public void setT(double t) {
 		if(t >= 0)
 			this.t = t;
 	}
 	
-	public void setVal(int alfa, int v) {
-		if(alfa > 0 && alfa < 90 && v > 0) {
-			this.alfa = alfa;
-			this.v = v;
+	public void setVal(double angolo, double v2) {
+		if(angolo > 0 && angolo < 90 && v2 > 0) {
+			this.alfa = angolo;
+			this.v = v2;
 		}
 	}
 	
 	public double calcolaX() {
-		return v * Math.cos(alfa) * t;
+		double rad = radianti(alfa);
+		return v * Math.cos(rad) * t;
 	}
 	
 	public double calcolaY() {
-		return -0.5 * G * Math.pow(t, 2) + v * Math.sin(alfa) * t;
+		double rad = radianti(alfa);
+		return -0.5 * G * Math.pow(t, 2) + v * Math.sin(rad) * t;
 	}
-	
+	public double radianti(double gradi) {
+		return (gradi * Math.PI) / 180;
+	}
 	
 
 }
