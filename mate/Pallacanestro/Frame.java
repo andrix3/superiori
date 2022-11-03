@@ -185,7 +185,6 @@ public class Frame extends Thread{
 	}
 	
 	public void spostaPalla(int x, int y) {
-		//System.out.println(h + "  " + w);
 		label3.setBounds(x + xPalla, yPalla - y, latoPalla, latoPalla);
 	}
 	
