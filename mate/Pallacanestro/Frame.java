@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Label;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -14,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+
 public class Frame extends Main{
 	final String pathPalla = "C:\\Users\\gaeta\\Documents\\java\\Pallacanestro\\palla.png";
 	final String pathCanestro = "C:\\Users\\gaeta\\Documents\\java\\Pallacanestro\\canestro.jpg";
@@ -24,19 +24,6 @@ public class Frame extends Main{
 	private int forza;
 	private int angolo;
 	
-	public int getForza() {
-		return forza;
-	}
-	public void setForza(int forza) {
-		this.forza = forza;
-	}
-	public int getAngolo() {
-		return angolo;
-	}
-	public void setAngolo(int angolo) {
-		this.angolo = angolo;
-	}
-
 	JFrame frame = new JFrame();
 	JPanel panel1 = new JPanel();
 	JLabel label1 = new JLabel();
@@ -50,13 +37,27 @@ public class Frame extends Main{
 	
 	JButton button = new JButton();
 	
-	
 	ImageIcon ic1 = new ImageIcon(pathPalla);
     ImageIcon palla = new ImageIcon(ic1.getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH));
     
     ImageIcon ic2 = new ImageIcon(pathCanestro);
     ImageIcon canestro = new ImageIcon(ic2.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+    
+    CalcoloTraiettoria cT = new CalcoloTraiettoria();
 
+    public int getForza() {
+		return forza;
+	}
+	public void setForza(int forza) {
+		this.forza = forza;
+	}
+	public int getAngolo() {
+		return angolo;
+	}
+	public void setAngolo(int angolo) {
+		this.angolo = angolo;
+	}
+    
 	public Frame() throws InterruptedException {
 		setSlider();
 		setLabel();
@@ -122,7 +123,14 @@ public class Frame extends Main{
 		button.setAlignmentY(150);
 		button.setPreferredSize(new Dimension(120, 30));
 		button.setFocusPainted(false);
-		button.addActionListener(e -> giocaBut());
+		button.addActionListener(e -> {
+			try {
+				giocaBut();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
 	}
 	
 	private void setSlider() {
@@ -142,20 +150,30 @@ public class Frame extends Main{
 	}
 	
 	public void cambiaForza() {
-		label1.setText("Forza: " + slider1.getValue());
-		setForza(slider1.getValue());
+		int v = slider1.getValue();
+		label1.setText("Forza: " + v);
+		cT.setV(v);
+		setForza(v);
 	}
 	
 	public void cambiaAngolo() {
-		label2.setText("Angolo: " + slider2.getValue());
-		setAngolo(slider2.getValue());
+		int angolo = slider2.getValue();
+		label2.setText("Angolo: " + angolo);
+		cT.setAlfa(angolo);
+		setAngolo(angolo);
+	}
+
+	public void giocaBut() throws InterruptedException {
+		cT.setVal(slider2.getValue(), slider1.getValue());
+		spostaPalla();
 	}
 	
-	public void giocaBut() {
-		super.giocaBut(getForza(), getAngolo());
-	}
-	
-	public void spostaPalla(int x, int y) {
-		label3.setBounds(x, y, 45, 45);
+	public void spostaPalla() throws InterruptedException {
+		for(int i = 0; i < 60; i++) {
+			cT.setT(i);
+			System.out.println(cT.calcolaX() + "    " + cT.calcolaY());
+			label3.setBounds((int)cT.calcolaX(), (int)cT.calcolaY(), 45, 45);
+			Thread.sleep(1000);
+		}
 	}
 }
