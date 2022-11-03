@@ -3,16 +3,15 @@ public class Main {
 
 	public static void main(String[] args) throws InterruptedException {
 
+		System.out.println("kjhkjh");
 		Frame fr = new Frame();
+		System.out.println("Fattp");
 		
-		Thread.sleep(2000);
-		
-		//per spostare la palla
-		
-	}
+		/*Thread thFrame = new Thread(fr);
+		thFrame.start();*/
+		//gioca(10, 10, fr);
+	}  
 	
 	//Nella tua superclasse:
-	public void giocaBut(int forza, int angolo){
-		
-	}
+	
 }

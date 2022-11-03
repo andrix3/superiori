@@ -14,17 +14,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-public class Frame extends Main{
+public class Frame {
 	final String pathPalla = "C:\\Users\\gaeta\\Documents\\java\\Pallacanestro\\palla.png";
 	final String pathCanestro = "C:\\Users\\gaeta\\Documents\\java\\Pallacanestro\\canestro.jpg";
 	
 	final int LARGHEZZA = 800;
 	final int ALTEZZA = 500;
 	
-	private int forza;
-	private int angolo;
+	private double v;
+	private double angolo;
 	
-	JFrame frame = new JFrame();
+	static JFrame frame = new JFrame();
 	JPanel panel1 = new JPanel();
 	JLabel label1 = new JLabel();
 	JSlider slider1 = new JSlider(0, 100, 50);
@@ -32,7 +32,7 @@ public class Frame extends Main{
 	JSlider slider2 = new JSlider(0, 100, 50);
 	
 	JPanel panel2 = new JPanel();
-	JLabel label3 = new JLabel();
+	static JLabel label3 = new JLabel();
 	JLabel label4 = new JLabel();
 	
 	JButton button = new JButton();
@@ -43,22 +43,24 @@ public class Frame extends Main{
     ImageIcon ic2 = new ImageIcon(pathCanestro);
     ImageIcon canestro = new ImageIcon(ic2.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
     
-    CalcoloTraiettoria cT = new CalcoloTraiettoria();
+    Palla p = new Palla();
+    
+    boolean gioco = false;
 
-    public int getForza() {
-		return forza;
+    public double getVelocita() {
+		return v;
 	}
-	public void setForza(int forza) {
-		this.forza = forza;
+	public void setvelocita(double v) {
+		this.v = v;
 	}
-	public int getAngolo() {
+	public double getAngolo() {
 		return angolo;
 	}
-	public void setAngolo(int angolo) {
+	public void setAngolo(double angolo) {
 		this.angolo = angolo;
 	}
     
-	public Frame() throws InterruptedException {
+	public Frame(){
 		setSlider();
 		setLabel();
 		setButton();
@@ -152,28 +154,37 @@ public class Frame extends Main{
 	public void cambiaForza() {
 		int v = slider1.getValue();
 		label1.setText("Forza: " + v);
-		cT.setV(v);
-		setForza(v);
+		//cT.setV(v);
+		setvelocita(v);
 	}
 	
 	public void cambiaAngolo() {
 		int angolo = slider2.getValue();
 		label2.setText("Angolo: " + angolo);
-		cT.setAlfa(angolo);
+		//cT.setAlfa(angolo);
 		setAngolo(angolo);
 	}
 
 	public void giocaBut() throws InterruptedException {
-		cT.setVal(slider2.getValue(), slider1.getValue());
-		spostaPalla();
+		//cT.setVal(angolo, v);
+		//super.gioca(slider2.getValue(), slider1.getValue(), this);
+		p.setPalla(angolo, v);
+		
+		Thread thFrame = new Thread(p);
+		thFrame.start();
 	}
 	
-	public void spostaPalla() throws InterruptedException {
-		for(int i = 0; i < 60; i++) {
-			cT.setT(i);
-			System.out.println(cT.calcolaX() + "    " + cT.calcolaY());
-			label3.setBounds((int)cT.calcolaX(), (int)cT.calcolaY(), 45, 45);
-			Thread.sleep(1000);
-		}
+	public static void spostaPalla(int x, int y) {
+		
+		label3.setBounds(x, y, 45, 45);
+		//panel2.updateUI();
+		frame.repaint();
 	}
+	/*@Override
+	public void run() {
+		gioco = true;
+		while(gioco) {
+			//graphics 
+		}
+	}*/
 }
