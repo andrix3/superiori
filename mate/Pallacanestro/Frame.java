@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
@@ -32,8 +33,8 @@ public class Frame extends Thread{
 	JSlider slider2 = new JSlider(0, 100, 50);
 	
 	JPanel panel2 = new JPanel();
-	JLabel label3 = new JLabel();
-	JLabel label4 = new JLabel();
+	JLabel label3 = new JLabel();	//palla
+	JLabel label4 = new JLabel();	//canestro
 	
 	JButton button = new JButton();
 	
@@ -46,22 +47,11 @@ public class Frame extends Thread{
     Palla p = new Palla();
     
     private boolean gioco = false;
-    private boolean movimento = false;
     private int x = 0;
     private int y = 0;
-
-    public double getVelocita() {
-		return v;
-	}
-	public void setvelocita(double v) {
-		this.v = v;
-	}
-	public double getAngolo() {
-		return angolo;
-	}
-	public void setAngolo(double angolo) {
-		this.angolo = angolo;
-	}
+    private int xPalla, yPalla, xCanestro, yCanestro;
+    private int latoPalla, latoCanestro;
+    private int centroXCanestro1, centroXCanestro2, centroYCanestro;
     
 	public Frame(){
 		setSlider();
@@ -107,7 +97,7 @@ public class Frame extends Thread{
 	private void setLabel(){
 		label1.setBounds(0, 30, 120, 50);
 		label1.setAlignmentX(Component.CENTER_ALIGNMENT);
-		label1.setText("Forza: " + slider1.getValue());
+		label1.setText("Velocita': " + slider1.getValue());
 		label1.setPreferredSize(new Dimension(120, 30));
 		
 		label2.setBounds(0, 100, 120, 50);
@@ -137,7 +127,7 @@ public class Frame extends Thread{
 		slider1.setPaintTrack(true);
 		slider1.setMajorTickSpacing(25);
 		slider1.setPaintLabels(true);
-		slider1.addChangeListener(e -> cambiaForza());
+		slider1.addChangeListener(e -> cambiaVelocita());
 		slider1.setVisible(true);
 		
 		slider2.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -148,9 +138,22 @@ public class Frame extends Thread{
 		slider2.setVisible(true);
 	}
 	
-	public void cambiaForza() {
+	 public double getVelocita() {
+			return v;
+		}
+		public void setvelocita(double v) {
+			this.v = v;
+		}
+		public double getAngolo() {
+			return angolo;
+		}
+		public void setAngolo(double angolo) {
+			this.angolo = angolo;
+		}
+	
+	public void cambiaVelocita() {
 		int v = slider1.getValue();
-		label1.setText("Forza: " + v);
+		label1.setText("Velocita': " + v);
 		setvelocita(v);
 	}
 	
@@ -161,24 +164,66 @@ public class Frame extends Thread{
 	}
 
 	public void giocaBut(){
-		movimento = true;
-		p.setPalla(angolo, v);
+		frame.setResizable(false);
+		button.setEnabled(false);
+		
+		//calcolo posizione del canestro
+		centroXCanestro1 = (395 * latoCanestro) / 980;		//centro del canestro di dimensioni 980x980  -->  395x340 - [585 - latoPalla]x340
+		centroXCanestro2 = ((585 - (latoPalla / 2)) * latoCanestro) / 980;
+		centroYCanestro = (340 * latoCanestro) / 980;
+		
+		centroXCanestro1 += xCanestro;	//aggiungo offset del canestro
+		centroXCanestro2 += xCanestro;
+		centroYCanestro += yCanestro;
+		
+		p.setPalla(angolo, v, centroXCanestro1, centroXCanestro2, centroYCanestro);
+		p.setMovimento(true);
 		
 		Thread thFrame = new Thread(p);
 		thFrame.start();
+		System.out.println("finito");
 	}
 	
 	public void spostaPalla(int x, int y) {
 		//System.out.println(h + "  " + w);
-		label3.setBounds(x, y, 45, 45);
+		label3.setBounds(x + xPalla, yPalla - y, latoPalla, latoPalla);
 	}
 	
 	private void setDimensioni() {
 		int h = panel2.getHeight();
 		int w = panel2.getWidth();
+		int area = h * w;
 		
-		int x0 = h - (h / 5);
-		System.out.println(x0 +" " + h);
+		//palla
+		int areaPalla = area / 500;		//l'area della palla deve essere di scala 1 : 200 rispetto all'area del panel
+		latoPalla = (int)Math.sqrt(areaPalla);
+		ImageIcon ic1 = new ImageIcon(pathPalla);
+	    ImageIcon palla = new ImageIcon(ic1.getImage().getScaledInstance(latoPalla, latoPalla, Image.SCALE_SMOOTH));
+	    
+	    xPalla = (w / 6) - latoPalla / 2;
+		yPalla = (h - (h / 5)) - latoPalla / 2;		
+	    
+	    if(!p.isMovimento())
+	    {
+	    	label3.removeAll();
+		    label3.setIcon(palla);
+	    	label3.setBounds(xPalla, yPalla, latoPalla, latoPalla);
+	    }
+	    
+	    //canestro
+	    xCanestro = w - (w / 3);
+	    yCanestro = h - (h / 2);
+	    
+	    int areaCanestro = area / 9;
+	    latoCanestro = (int)Math.sqrt(areaCanestro);
+	    ImageIcon ic2 = new ImageIcon(pathCanestro);
+	    ImageIcon canestro = new ImageIcon(ic2.getImage().getScaledInstance(latoCanestro, latoCanestro, Image.SCALE_SMOOTH));
+		
+	    label4.removeAll();
+	    label4.setIcon(canestro);
+	    label4.setBounds(xCanestro, yCanestro, latoCanestro, latoCanestro);
+	    
+	    //System.out.println(w + " " + h);
 	}
 	
 	@Override
@@ -189,6 +234,17 @@ public class Frame extends Thread{
 				x = p.getX();
 				y = p.getY();
 				spostaPalla(x, y);
+			}
+			if(!p.isMovimento() && p.isCanestro() && !p.isShowMessage())
+			{
+				p.setShowMessage(true);
+				JOptionPane.showMessageDialog(frame, "Hai fatto canestro!");
+			}
+			
+			if(!p.isMovimento())
+			{
+				frame.setResizable(true);
+				button.setEnabled(true);
 			}
 			
 			setDimensioni();
